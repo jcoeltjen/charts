@@ -30,6 +30,17 @@ spec:
           imagePullPolicy: IfNotPresent
           securityContext:
             privileged: true
+        - name: populate-plugins-with-originals
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          volumeMounts:
+           - mountPath: /mnt/sonarqube/extensions/plugins
+             name: sonarqube
+             subPath: plugins
+          command:
+           - bash 
+           - -c  
+           - cp /opt/sonarqube/extensions/plugins/* /mnt/sonarqube/extensions/plugins/
       {{- if .Values.plugins.install }}
         - name: install-plugins
           image: {{ default "joosthofman/wget:1.0" .Values.plugins.initContainerImage }}
